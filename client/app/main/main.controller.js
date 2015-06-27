@@ -121,11 +121,8 @@ angular.module('stockstreamApp')
         return color;
     }
 
-
-
-
     $scope.$on('$destroy', function(){
-      socket.unsyncUpdates('stock',function(event, stock, stocks) {
+      socket.unSyncUpdates('stock',function(event, stock, stocks) {
         $scope.refreshChart();
       });
     });
