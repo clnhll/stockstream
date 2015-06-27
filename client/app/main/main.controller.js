@@ -94,12 +94,12 @@ angular.module('stockstreamApp')
           $(".btn").prop("disabled",false);
           $(".form-control").prop("disabled",false);
           $scope.newStock='';
-          /** $http.get('/api/stocks/').success(function(stocks) {
+           $http.get('/api/stocks/').success(function(stocks) {
             $scope.stocks = stocks;
             socket.syncUpdates('stock', $scope.stocks);
             $scope.refreshChart();
 
-          }); **/
+          });
         });
       })
 
@@ -110,9 +110,9 @@ angular.module('stockstreamApp')
       $http.delete('/api/stocks/' + stock._id).success(function(){
         $http.get('/api/stocks/').success(function(stocks) {
           $scope.stocks = stocks;
-          /** socket.syncUpdates('stock', $scope.stocks,function(event, stock, stocks) {
-            //$scope.refreshChart();
-          }); **/
+           socket.syncUpdates('stock', $scope.stocks,function(event, stock, stocks) {
+            $scope.refreshChart();
+          });
           $scope.refreshChart();
         });
       });
