@@ -96,7 +96,9 @@ angular.module('stockstreamApp')
           $scope.newStock='';
            $http.get('/api/stocks/').success(function(stocks) {
             $scope.stocks = stocks;
-            socket.syncUpdates('stock', $scope.stocks);
+            socket.syncUpdates('stock', $scope.stocks,function(event, stock, stocks) {
+              setTimeout(function(){$scope.refreshChart();},500);
+            });
             $scope.refreshChart();
 
           });
