@@ -4,6 +4,8 @@ angular.module('stockstreamApp')
 
   .controller('MainCtrl', function ($scope, $http, socket, $filter) {
     $scope.awesomeThings = [];
+    $scope.arrayLength=-1;
+    $scope.deleted = false;
     var date = new Date();
   	var year = date.getFullYear();
   	var month = date.getMonth().toString().length == 1 ? "0" + (date.getMonth()+1).toString() : (date.getMonth()+1).toString();
@@ -59,12 +61,13 @@ angular.module('stockstreamApp')
               enabled: false
             }
       });
+      $scope.arrayLength = $scope.stocks.length
     }
 
     $http.get('/api/stocks/').success(function(stocks) {
       $scope.stocks = stocks;
       socket.syncUpdates('stock', $scope.stocks,function(event, stock, stocks) {
-        $scope.refreshChart();
+        setTimeout(function(){$scope.refreshChart();},500);
       });
       $scope.refreshChart();
     });
@@ -88,14 +91,15 @@ angular.module('stockstreamApp')
           color: $scope.getRandomColor()
         }
         $http.post('/api/stocks', newStockInfo).success(function(){
-          $http.get('/api/stocks/').success(function(stocks) {
+          $(".btn").prop("disabled",false);
+          $(".form-control").prop("disabled",false);
+          $scope.newStock='';
+          /** $http.get('/api/stocks/').success(function(stocks) {
             $scope.stocks = stocks;
             socket.syncUpdates('stock', $scope.stocks);
             $scope.refreshChart();
-            $(".btn").prop("disabled",false);
-            $(".form-control").prop("disabled",false);
-            $scope.newStock='';
-          });
+
+          }); **/
         });
       })
 
@@ -104,9 +108,11 @@ angular.module('stockstreamApp')
 
     $scope.deleteStock = function(stock) {
       $http.delete('/api/stocks/' + stock._id).success(function(){
-    socket.syncUpdates('stock', $scope.stocks);
         $http.get('/api/stocks/').success(function(stocks) {
           $scope.stocks = stocks;
+          /** socket.syncUpdates('stock', $scope.stocks,function(event, stock, stocks) {
+            //$scope.refreshChart();
+          }); **/
           $scope.refreshChart();
         });
       });
@@ -122,8 +128,8 @@ angular.module('stockstreamApp')
     }
 
     $scope.$on('$destroy', function(){
-      socket.unSyncUpdates('stock',function(event, stock, stocks) {
-        $scope.refreshChart();
-      });
+      socket.unSyncUpdates('stock' /** ,function(event, stock, stocks) {
+        //$scope.refreshChart();
+      } **/ );
     });
   });
