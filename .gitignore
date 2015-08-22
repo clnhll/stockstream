@@ -4,4 +4,7 @@ public
 .idea
 client/bower_components
 dist
+data
+data/
+data/*
 /server/config/local.env.js

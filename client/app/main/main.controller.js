@@ -2,7 +2,7 @@
 
 angular.module('stockstreamApp')
 
-  .controller('MainCtrl', function ($scope, $http, socket, $filter) {
+  .controller('MainCtrl', function ($scope, $http, $timeout, socket, $filter) {
     $scope.awesomeThings = [];
     $scope.arrayLength=-1;
     $scope.deleted = false;
@@ -13,6 +13,11 @@ angular.module('stockstreamApp')
   	var hours = date.getHours().toString().length == 1 ? "0" + date.getHours().toString() : date.getHours().toString();
   	var minutes = date.getMinutes().toString().length == 1 ? "0" + date.getMinutes().toString() : date.getMinutes().toString();
     var dateStr = year + "-" + month + "-" + day;
+
+    $timeout(function() {
+      socket.unsyncUpdates('stock');
+      alert('Disconnects after five minutes to save server resources. Refresh page to continue using.');
+    }, 1000*60*5 /* 5 minute timeout */ );
 
     $scope.refreshChart = function(){
       $('#container').highcharts({
@@ -130,7 +135,7 @@ angular.module('stockstreamApp')
     }
 
     $scope.$on('$destroy', function(){
-      socket.unSyncUpdates('stock' /** ,function(event, stock, stocks) {
+      socket.unsyncUpdates('stock' /** ,function(event, stock, stocks) {
         //$scope.refreshChart();
       } **/ );
     });
